@@ -219,7 +219,7 @@
       // Korrigerad digital tid
       const hours = String(now.getHours()).padStart(2, '0');
       const minutes = String(now.getMinutes()).padStart(2, '0');
-      document.getElementById('clock-time').textContent = `hours:{minutes}`;
+      document.getElementById('clock-time').textContent = `${hours}:${minutes}`;
 
       // Fullt datum på svenska
       const weekday = now.toLocaleDateString('sv-SE', { weekday: 'long' });
@@ -310,7 +310,7 @@
     async function fetchMenuData() {
       // 1. Direkt anrop
       try {
-        const res = await fetch(`RSSMENUURL&t={Date.now()}`, { cache: 'no-store' });
+        const res = await fetch(`${RSS_MENU_URL}&_t=${Date.now()}`, { cache: 'no-store' });
         if (res.ok) {
           const xml = await res.text();
           const items = parseXmlFeed(xml);
@@ -320,7 +320,7 @@
 
       // 2. RSS2JSON proxy
       try {
-        const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=encodeURIComponent(RSSMENUURL)&t={Date.now()}`);
+        const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_MENU_URL)}&_t=${Date.now()}`);
         if (res.ok) {
           const json = await res.json();
           if (json.status === 'ok' && Array.isArray(json.items) && json.items.length > 0) {
@@ -335,7 +335,7 @@
 
       // 3. AllOrigins proxy
       try {
-        const res = await fetch(`https://api.allorigins.win/raw?url=encodeURIComponent(RSSMENUURL)&t={Date.now()}`);
+        const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(RSS_MENU_URL)}&_t=${Date.now()}`);
         if (res.ok) {
           const xml = await res.text();
           const items = parseXmlFeed(xml);
@@ -389,7 +389,7 @@
 
       match = items.find(i => {
         const str = `${i.title || ''} ${i.pubDate || ''}`;
-        return str.includes(todayISO) || str.includes(`dayNum/{monthNum}`);
+        return str.includes(todayISO) || str.includes(`${dayNum}/${monthNum}`);
       });
       if (match) return match;
 
@@ -460,4 +460,3 @@
   </script>
 </body>
 </html>
-
